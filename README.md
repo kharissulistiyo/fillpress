@@ -1,4 +1,4 @@
-fillpress
-=========
+Fill Press
+==========
 
-A Simple Options Page Plugin
+A Simple WordPress Options Page Plugin
