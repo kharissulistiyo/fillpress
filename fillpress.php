@@ -28,6 +28,9 @@ function fillpress_admin_init() {
 	register_setting( 'fillpress-group-1', 'fp-setting2' );
 	register_setting( 'fillpress-group-1', 'fp-setting3' ); // Checkbox
 	register_setting( 'fillpress-group-1', 'fp-setting4' ); // Dropdown
+	register_setting( 'fillpress-group-1', 'fp-setting5' ); // Post Types Checkbox
+	register_setting( 'fillpress-group-1', 'fp-setting6' ); // Textarea
+	register_setting( 'fillpress-group-1', 'fp-setting7' ); // Radio
 	
 	/* Create setting section */ 
     add_settings_section( 'fillpress-section-one', 'Group 1', 'section_one_callback', 'fillpress-section-1' );
@@ -37,6 +40,9 @@ function fillpress_admin_init() {
     add_settings_field( 'field-two', 'Field Two', 'field_two_callback', 'fillpress-section-1', 'fillpress-section-one' );
     add_settings_field( 'field-three', 'Field Three', 'field_three_callback', 'fillpress-section-1', 'fillpress-section-one' );
     add_settings_field( 'field-four', 'Field Four', 'field_four_callback', 'fillpress-section-1', 'fillpress-section-one' );
+    add_settings_field( 'field-five', 'Field Five', 'field_five_callback', 'fillpress-section-1', 'fillpress-section-one' );
+    add_settings_field( 'field-six', 'Field Six', 'field_six_callback', 'fillpress-section-1', 'fillpress-section-one' );
+    add_settings_field( 'field-seven', 'Field Seven', 'field_seven_callback', 'fillpress-section-1', 'fillpress-section-one' );
 }
 
 
@@ -86,6 +92,64 @@ function fillpress_admin_init() {
 		</select>
 		
 	<?php } 
+	
+	
+	function field_five_callback(){ 
+		$setting = esc_attr( get_option( 'fp-setting5' ) ); ?>
+	
+	
+	
+		<select name="fp-setting5">
+		<?php
+		$args = array(
+		   'public'   => true,
+		   '_builtin' => true
+		);
+
+		$output = 'names'; // names or objects, note names is the default
+		$operator = 'and'; // 'and' or 'or'
+
+		$post_types = get_post_types( $args, $output, $operator ); 
+
+		foreach ( $post_types  as $post_type ) { ?>
+
+		   <option value="<?php echo $post_type; ?>"<?php selected( $setting, $post_type ); ?>><?php echo $post_type; ?></option>	
+		
+		<?php	
+		}
+		?>
+		</select>
+		<p class='description'>Public post types.</p>
+	
+	<?php }
+	
+	
+	function field_six_callback(){
+		$setting = esc_attr( get_option( 'fp-setting6' ) ); ?>
+	
+		<textarea name="fp-setting6" rows="8" cols="60" id="fp-setting6" class="code"><?php echo esc_textarea( get_option( 'fp-setting6' ) ); ?></textarea>
+	
+	<?php }
+	
+	
+	
+	function field_seven_callback(){
+		$radio_items = array(
+			'one' => 'One',
+			'two' => 'Two',
+			'three' => 'Three',
+			'four' => 'Four',
+		);
+	
+		foreach($radio_items as $key => $value):
+		
+			$selected = (get_option('fp-setting7') == $key) ? 'checked="checked"' : '';
+			echo "\n\t<label><input type='radio' name='fp-setting7' value='" . esc_attr($key) . "' $selected/> $value</label><br />";
+			
+		endforeach;
+		
+	}
+	
 	
 /* Settings callback */
 function fillpress_options_page() {
