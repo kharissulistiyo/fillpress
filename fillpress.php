@@ -31,18 +31,22 @@ function fillpress_admin_init() {
 	register_setting( 'fillpress-group-1', 'fp-setting5' ); // Post Types Checkbox
 	register_setting( 'fillpress-group-1', 'fp-setting6' ); // Textarea
 	register_setting( 'fillpress-group-1', 'fp-setting7' ); // Radio
+	register_setting( 'fillpress-group-1', 'fp-setting8' ); // Group Checkbox
+	register_setting( 'fillpress-group-1', 'fp-setting9' ); // Group Checkbox post types
 	
 	/* Create setting section */ 
     add_settings_section( 'fillpress-section-one', 'Group 1', 'section_one_callback', 'fillpress-section-1' );
 	
 	/* Create fields */
-    add_settings_field( 'field-one', 'Field One', 'field_one_callback', 'fillpress-section-1', 'fillpress-section-one' );
-    add_settings_field( 'field-two', 'Field Two', 'field_two_callback', 'fillpress-section-1', 'fillpress-section-one' );
-    add_settings_field( 'field-three', 'Field Three', 'field_three_callback', 'fillpress-section-1', 'fillpress-section-one' );
-    add_settings_field( 'field-four', 'Field Four', 'field_four_callback', 'fillpress-section-1', 'fillpress-section-one' );
-    add_settings_field( 'field-five', 'Field Five', 'field_five_callback', 'fillpress-section-1', 'fillpress-section-one' );
-    add_settings_field( 'field-six', 'Field Six', 'field_six_callback', 'fillpress-section-1', 'fillpress-section-one' );
-    add_settings_field( 'field-seven', 'Field Seven', 'field_seven_callback', 'fillpress-section-1', 'fillpress-section-one' );
+    add_settings_field( 'field-one', 'Text Field 1', 'field_one_callback', 'fillpress-section-1', 'fillpress-section-one' );
+    add_settings_field( 'field-two', 'Text Field 2', 'field_two_callback', 'fillpress-section-1', 'fillpress-section-one' );
+    add_settings_field( 'field-three', 'Single Checkbox', 'field_three_callback', 'fillpress-section-1', 'fillpress-section-one' );
+    add_settings_field( 'field-four', 'Custom Dropdown', 'field_four_callback', 'fillpress-section-1', 'fillpress-section-one' );
+    add_settings_field( 'field-five', 'Post Types Dropdown', 'field_five_callback', 'fillpress-section-1', 'fillpress-section-one' );
+    add_settings_field( 'field-six', 'Textarea', 'field_six_callback', 'fillpress-section-1', 'fillpress-section-one' );
+    add_settings_field( 'field-seven', 'Radio', 'field_seven_callback', 'fillpress-section-1', 'fillpress-section-one' );
+    add_settings_field( 'field-eight', 'Custom Multi Checkbox', 'field_eight_callback', 'fillpress-section-1', 'fillpress-section-one' );
+    add_settings_field( 'field-nine', 'Post Types Checkbox', 'field_nine_callback', 'fillpress-section-1', 'fillpress-section-one' );
 }
 
 
@@ -149,6 +153,74 @@ function fillpress_admin_init() {
 		endforeach;
 		
 	}
+	
+	
+	
+	
+	function field_eight_callback(){
+		$setting = esc_attr( get_option( 'fp-setting8' ) );	
+		$checkbox_group_items = array(
+			'one' => 'One',
+			'two' => 'Two',
+			'three' => 'Three',
+			'four' => 'Four',
+		);
+	
+		foreach($checkbox_group_items as $key => $value) : 
+		
+			$checked = in_array($key, (array) get_option( 'fp-setting8' )) ? 'checked="checked"' : '';		
+		
+		?>
+			<p>	
+				<label for="fp-setting8-<?php echo $key; ?>">
+					<input id="fp-setting8-<?php echo $key; ?>" type="checkbox" <?php echo $checked; ?> name="fp-setting8[]" value="<?php echo esc_attr($key); ?>" /> <?php echo esc_attr($value); ?>  
+				</label>
+			</p>
+			
+		<?php endforeach;
+	
+	}
+	
+	
+	
+	
+	function field_nine_callback(){
+	
+		$setting = esc_attr( get_option( 'fp-setting9' ) );
+	
+		$args = array(
+		   'public'   => true,
+		   '_builtin' => true
+		);
+
+		$output = 'names'; // names or objects, note names is the default
+		$operator = 'and'; // 'and' or 'or'
+
+		$post_types = get_post_types( $args, $output, $operator );
+	
+		foreach ($post_types as $post_type) :
+		
+			// $checked = in_array($post_type, get_option( 'fp-setting9' )) ? 'checked="checked"' : ''; 
+			
+			if(in_array($post_type, (array) get_option( 'fp-setting9' ))) {
+				$checked = 'checked="checked"';
+			} else {
+				$checked = '';
+			}
+			
+			?>
+		
+			<p>	
+				<label for="fp-setting9-<?php echo $post_type; ?>">
+					<input id="fp-setting9-<?php echo $post_type; ?>" type="checkbox" <?php echo $checked; ?> name="fp-setting9[]" value="<?php echo esc_attr($post_type); ?>" /> <?php echo esc_attr($post_type); ?>  
+				</label>
+			</p>		
+	
+		<?php endforeach;
+	
+	}
+	
+	
 	
 	
 /* Settings callback */
