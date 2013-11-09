@@ -12,9 +12,9 @@ Author URI: http://kharisulistiyo.github.io
 
 /* Create Settings Menu */
 
-add_action( 'admin_menu', 'my_admin_menu' );
-function my_admin_menu() {
-    add_options_page( 'FillPress', 'FillPress', 'manage_options', 'fillpress', 'fillpress_options_page' );
+add_action( 'admin_menu', 'fillpress_admin_menu' );
+function fillpress_admin_menu() {
+    add_menu_page( 'FillPress', 'FillPress', 'manage_options', 'fillpress', 'fillpress_options_page' );
 }
 
 
