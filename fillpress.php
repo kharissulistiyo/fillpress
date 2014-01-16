@@ -10,6 +10,12 @@ Author URI: http://kharisulistiyo.github.io
 */
 
 
+
+
+require_once('color-picker.php');
+require_once('date-picker.php');
+
+
 /* Create Settings Menu */
 
 add_action( 'admin_menu', 'fillpress_admin_menu' );
@@ -33,6 +39,9 @@ function fillpress_admin_init() {
 	register_setting( 'fillpress-group-1', 'fp-setting7' ); // Radio
 	register_setting( 'fillpress-group-1', 'fp-setting8' ); // Group Checkbox
 	register_setting( 'fillpress-group-1', 'fp-setting9' ); // Group Checkbox post types
+	register_setting( 'fillpress-group-1', 'fp-setting10' ); // Post categiry dropdown
+	register_setting( 'fillpress-group-1', 'field-colorpicker' ); // Post categiry dropdown
+	register_setting( 'fillpress-group-1', 'field-datepicker' ); // Post categiry dropdown
 	
 	/* Create setting section */ 
     add_settings_section( 'fillpress-section-one', 'Group 1', 'section_one_callback', 'fillpress-section-1' );
@@ -47,6 +56,9 @@ function fillpress_admin_init() {
     add_settings_field( 'field-seven', 'Radio', 'field_seven_callback', 'fillpress-section-1', 'fillpress-section-one' );
     add_settings_field( 'field-eight', 'Custom Multi Checkbox', 'field_eight_callback', 'fillpress-section-1', 'fillpress-section-one' );
     add_settings_field( 'field-nine', 'Post Types Checkbox', 'field_nine_callback', 'fillpress-section-1', 'fillpress-section-one' );
+    add_settings_field( 'field-ten', 'Taxonomy Dropdown', 'field_ten_callback', 'fillpress-section-1', 'fillpress-section-one' );
+    add_settings_field( 'field-colorpicker', 'Color Picker', 'field_colorpicker_callback', 'fillpress-section-1', 'fillpress-section-one' );
+    add_settings_field( 'field-datepicker', 'Date Picker', 'field_datepicker_callback', 'fillpress-section-1', 'fillpress-section-one' );
 }
 
 
@@ -221,6 +233,68 @@ function fillpress_admin_init() {
 	}
 	
 	
+	function field_ten_callback(){
+	
+	
+		$setting = esc_attr( get_option( 'fp-setting10' ) );
+		
+		// Category taxonomy
+		$terms = get_terms('category');
+		
+		// var_dump($terms);
+		
+		$saved_setting = get_option( 'fp-setting10' );
+		
+		$count = count($terms);
+		if ( $count > 0 ){
+		 echo '<select name="fp-setting10">';		 
+		 
+		 foreach ( $terms as $thisterm ) {
+		 
+			if( $thisterm->slug == $saved_setting ) {
+				$selected = 'selected="selected"';
+			} else {
+				$selected = '';
+			}		 
+		 
+		   echo '<option value="'. $thisterm->slug .'" '. $selected .'>' . $thisterm->name . '</option>';
+			
+		 }
+		 
+		 echo '</select>';
+		}
+	
+	
+	}
+	
+	
+	function field_colorpicker_callback(){ 
+	
+		$setting = esc_attr( get_option( 'field-colorpicker' ) );
+		
+		$color_value = isset($setting) ? $setting : '#ffffff';
+	
+	?>
+		
+		<input class="my-color-field" name="field-colorpicker" type="text" value="<?php echo esc_html($color_value); ?>" />	
+	
+	<?php }
+	
+	
+	
+	function field_datepicker_callback(){
+	
+		$setting = esc_attr( get_option( 'field-datepicker' ) );
+		
+		$date_value = isset($setting) ? $setting : 'dd-mm-yy';
+	
+	?>
+	
+		<input type="text" class="fillpress_date" name="field-datepicker" value="<?php echo $date_value; ?>"/>
+	
+	<?php }
+	
+	
 	
 	
 /* Settings callback */
@@ -228,6 +302,15 @@ function fillpress_options_page() {
     ?>
     <div class="wrap">
         <h2>FillPress Settings</h2>
+		
+		<?php if( isset($_GET['settings-updated']) && $_GET['settings-updated'] == 'true'  ) {   ?>
+		
+			<div id="message" class="updated">
+				<p><strong><?php _e('Settings saved.') ?></strong></p>
+			</div>
+		
+		<?php } ?>
+		
         <form action="options.php" method="POST">
             <?php settings_fields( 'fillpress-group-1' ); ?>
             <?php do_settings_sections( 'fillpress-section-1' ); ?>
